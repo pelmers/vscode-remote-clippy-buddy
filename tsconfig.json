@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "lib": ["es2020"],
+    "target": "es6",
+    "sourceMap": true,
+    "baseUrl": ".",
+    "noImplicitAny": true,
+    "paths": {
+      "@lib/*": ["../src/*"]
+    },
+    "noFallthroughCasesInSwitch": true,
+    "strict": true /* enable all strict type-checking options */
+  }
+}

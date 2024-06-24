@@ -1,0 +1,67 @@
+{
+  "name": "remote-clippy-buddy-vscode",
+  "displayName": "Remote Clippy Buddy: pbcopy and pbpaste for VS Code",
+  "description": "Access your local keyboard from a remote terminal!",
+  "version": "0.2.1",
+  "author": "Peter Elmers <peter.elmers@yahoo.com>",
+  "publisher": "pelmers",
+  "engines": {
+    "vscode": "^1.70.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pelmers/code-couplet.git"
+  },
+  "icon": "icon.png",
+  "categories": [
+    "Other",
+    "Linters",
+    "Programming Languages"
+  ],
+  "keywords": [
+    "productivity",
+    "remote",
+    "clipboard",
+    "pbcopy",
+    "pbpaste",
+    "copy",
+    "paste",
+    "terminal"
+  ],
+  "activationEvents": [
+    "*"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {},
+  "keybindings": [],
+  "scripts": {
+    "vscode:prepublish": "yarn run package",
+    "build": "node_modules/.bin/webpack",
+    "watch": "node_modules/.bin/webpack --watch",
+    "package": "node_modules/.bin/webpack --mode production --devtool hidden-source-map",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/glob": "^7.2.0",
+    "@types/mocha": "^9.1.1",
+    "@types/node": "16.x",
+    "@types/vscode": "^1.70.0",
+    "@typescript-eslint/eslint-plugin": "^5.31.0",
+    "@typescript-eslint/parser": "^5.31.0",
+    "eslint": "^8.20.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "ts-loader": "^9.3.1",
+    "tsconfig-paths-webpack-plugin": "^4.0.0",
+    "typescript": "^4.7.4",
+    "vscode-languageserver-textdocument": "^1.0.7",
+    "webpack": "^5.11.0",
+    "webpack-cli": "^4.10.0"
+  },
+  "dependencies": {
+  }
+}
