@@ -12,16 +12,16 @@ export async function createTcpListener(
   const server = net.createServer();
 
   server.on("connection", (socket) => {
-    socket.on("data", (data) => {
+    socket.on("data", async (data) => {
       const command = data.toString().trim();
       log("Got command", command);
       if (command.startsWith("pbcopy")) {
         const clipData = command.slice("pbcopy".length).trim();
-        // TODO get this onto the client clipboard
-        log("Got clip data", clipData);
+        log("pbcopy", clipData);
+        await vscode.env.clipboard.writeText(clipData);
       } else if (command === "pbpaste") {
-        const data = "Hi from the server!";
-        // TODO: get client clipboard and return it as data
+        const data = await vscode.env.clipboard.readText();
+        log("pbpaste", data);
         socket.write(data);
       } else {
         socket.write("Unknown command");

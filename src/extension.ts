@@ -12,12 +12,12 @@ export async function activate(context: vscode.ExtensionContext) {
   // install to a temp directory
   const installDirectory = path.join(
     context.globalStorageUri.fsPath,
-    "clippy-buddy-b",
+    "clippy-buddy",
   );
   try {
     context.subscriptions.push(await install(installDirectory));
     // add the install directory to the PATH
-    log("TODO Adding to PATH", installDirectory);
+    log("Adding to PATH", installDirectory);
     context.environmentVariableCollection?.prepend("PATH", installDirectory, {applyAtProcessCreation: true, applyAtShellIntegration: true});
   } catch (e) {
     logError("Failed to install", e);
