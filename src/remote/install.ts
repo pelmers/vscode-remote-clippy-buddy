@@ -1,8 +1,9 @@
 import * as path from "path";
 import * as fs from "fs/promises";
 import * as vscode from "vscode";
-import { createSocketListener } from "./socketListener";
+import { createTcpListener } from "./socketListener";
 import { log } from "src/util";
+import { REMOTE_CLIPPY_PORT_ENV } from "./common";
 
 export const VERSION = "0.0.1";
 
@@ -10,10 +11,22 @@ export const VERSION = "0.0.1";
 // We want to install something executable on the PATH, so this takes a javascript path and
 // generates a wrapper shell script that runs the javascript file using the node install that launched this vscode.
 function wrapJSScript(scriptPath: string, callbackSocketPath: string) {
-  const nodePath = process.argv[0];
+  const nodePath = process.execPath;
   return `#!/bin/bash
-REMOTE_CLIPPY_CALLBACK_SOCKET="${callbackSocketPath}" "${nodePath}" "${scriptPath}" "$@"
+${REMOTE_CLIPPY_PORT_ENV}="${callbackSocketPath}" "${nodePath}" "${scriptPath}" "$@"
 `;
+}
+
+async function findOpenPort(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const server = require("net").createServer();
+    server.unref();
+    server.on("error", reject);
+    server.listen(0, () => {
+      const port = server.address().port;
+      server.close(() => resolve(port));
+    });
+  });
 }
 
 // Runs in regular node on the remote server.
@@ -32,5 +45,5 @@ export async function install(
     log(`Writing script to ${scriptPath}`);
     await fs.writeFile(scriptPath, scriptContents, { mode: 0o755 });
   }
-  return await createSocketListener(socketPath);
+  return await createTcpListener(await findOpenPort());
 }

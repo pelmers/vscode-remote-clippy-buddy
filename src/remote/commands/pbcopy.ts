@@ -1,16 +1,10 @@
 import * as net from "net";
 import { once } from "events";
+import { getPort } from "../common";
 
 async function main() {
-  const socketPath = process.env.REMOTE_CLIPPY_CALLBACK_SOCKET;
-  if (!socketPath) {
-    console.error(
-      "Environment variable REMOTE_CLIPPY_CALLBACK_SOCKET is not set.",
-    );
-    process.exit(1);
-  }
-
-  const socket = net.createConnection(socketPath);
+  const port = getPort();
+  const socket = net.createConnection(port);
 
   let data = "";
   process.stdin.on("data", (chunk) => {

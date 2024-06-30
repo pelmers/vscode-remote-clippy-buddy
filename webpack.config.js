@@ -15,8 +15,8 @@ const extensionConfig = {
 
   entry: {
     extension: "./src/extension.ts",
-    pbcopy: "./src/pbcopy.ts",
-    pbpaste: "./src/pbpaste.ts",
+    pbcopy: "./src/remote/commands/pbcopy.ts",
+    pbpaste: "./src/remote/commands/pbpaste.ts",
     testIndex: "./src/test/suite/index.ts",
   },
   output: {

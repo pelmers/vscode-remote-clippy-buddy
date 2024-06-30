@@ -3,23 +3,14 @@ import * as fsSync from "fs";
 import * as net from "net";
 import { log, logError } from "src/util";
 
-export async function createSocketListener(
-  socketPath: string,
+export async function createTcpListener(
+  port: number,
 ): Promise<vscode.Disposable> {
-  log("Creating socket listener", socketPath);
+  log("Creating TCP listener on port", port);
   // Listen for connections on the socket. They will be either "pbcopy" + data (put data on clipboard) or "pbpaste" (we return the data from clipboard)
   // TODO this listener isn't working. should I just use a tcp port?
   const server = net.createServer();
-  const result: Promise<void> = new Promise((resolve, reject) => {
-    server.on("error", (err: Error) => {
-      logError("Server error", err);
-      reject(err);
-    });
-    server.listen(socketPath, () => {
-      log(`Server listening on ${socketPath}`);
-      resolve();
-    });
-  });
+
   server.on("connection", (socket) => {
     socket.on("data", (data) => {
       const command = data.toString().trim();
@@ -44,10 +35,16 @@ export async function createSocketListener(
 
   const disposable = new vscode.Disposable(() => {
     server.close();
-    if (fsSync.existsSync(socketPath)) {
-      fsSync.unlinkSync(socketPath);
-    }
   });
-  await result;
-  return disposable;
+
+  return new Promise((resolve, reject) => {
+    server.on("error", (err: Error) => {
+      logError("Server error", err);
+      reject(err);
+    });
+    server.listen({ port, host: "localhost" }, () => {
+      log("Listening on port", port);
+      resolve(disposable);
+    });
+  });
 }

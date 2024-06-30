@@ -17,8 +17,8 @@ export async function activate(context: vscode.ExtensionContext) {
   try {
     context.subscriptions.push(await install(installDirectory));
     // add the install directory to the PATH
-    log("Adding to PATH", installDirectory);
-    context.environmentVariableCollection?.append("PATH", installDirectory);
+    log("TODO Adding to PATH", installDirectory);
+    context.environmentVariableCollection?.prepend("PATH", installDirectory, {applyAtProcessCreation: true, applyAtShellIntegration: true});
   } catch (e) {
     logError("Failed to install", e);
   }
