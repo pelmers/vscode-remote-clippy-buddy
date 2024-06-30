@@ -10,9 +10,7 @@
       "type": "extensionHost",
       "request": "launch",
       "cwd": "${workspaceFolder}",
-      "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}"
-      ],
+      "args": ["--extensionDevelopmentPath=${workspaceFolder}"],
       "outFiles": ["${workspaceFolder}/dist/**/*.js"],
       // https://stackoverflow.com/questions/63502253/vscode-build-error-the-terminal-process-bin-zsh-c-yarn-run-watch-extensi
       // if error, set "terminal.integrated.inheritEnv": false and quit/re-open

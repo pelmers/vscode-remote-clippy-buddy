@@ -1,0 +1,99 @@
+Arguments: 
+  /Users/pelmers/.nvm/versions/node/v18.20.2/bin/node /opt/homebrew/bin/yarn
+
+PATH: 
+  /Users/pelmers/devel/depot_tools:/Users/pelmers/bin:/Applications/Xcode.app/Contents/Developer/usr/bin:/Users/pelmers/bin/gcloud/google-cloud-sdk/bin:/opt/homebrew/Caskroom/miniforge/base/bin:/opt/homebrew/Caskroom/miniforge/base/condabin:/Users/pelmers/.nvm/versions/node/v18.20.2/bin:/opt/homebrew/bin:/opt/homebrew/sbin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin:/opt/X11/bin:/Library/Apple/usr/bin:/usr/local/share/dotnet:~/.dotnet/tools:/usr/local/sbin:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Users/pelmers/.cargo/bin:/Users/pelmers/Library/Android/sdk/platform-tools:/Users/pelmers/Library/Android/sdk/platform-sdk
+
+Yarn version: 
+  1.22.18
+
+Node version: 
+  18.20.2
+
+Platform: 
+  darwin arm64
+
+Trace: 
+  Error: write EPROTO 000CB3EF01000000:error:0A00042E:SSL routines:ssl3_read_bytes:tlsv1 alert protocol version:../deps/openssl/openssl/ssl/record/rec_layer_s3.c:1590:SSL alert number 70
+  
+      at WriteWrap.onWriteComplete [as oncomplete] (node:internal/stream_base_commons:94:16)
+
+npm manifest: 
+  {
+    "name": "remote-clippy-buddy-vscode",
+    "displayName": "Remote Clippy Buddy: pbcopy and pbpaste for VS Code",
+    "description": "Access your local keyboard from a remote terminal!",
+    "version": "0.2.1",
+    "author": "Peter Elmers <peter.elmers@yahoo.com>",
+    "publisher": "pelmers",
+    "engines": {
+      "vscode": "^1.70.0"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/pelmers/code-couplet.git"
+    },
+    "icon": "icon.png",
+    "categories": [
+      "Other",
+      "Linters",
+      "Programming Languages"
+    ],
+    "keywords": [
+      "productivity",
+      "remote",
+      "clipboard",
+      "pbcopy",
+      "pbpaste",
+      "copy",
+      "paste",
+      "terminal"
+    ],
+    "activationEvents": [
+      "*"
+    ],
+    "main": "./dist/extension.js",
+    "extensionKind": [
+      "workspace"
+    ],
+    "contributes": {},
+    "keybindings": [],
+    "scripts": {
+      "vscode:prepublish": "yarn run package",
+      "build": "node_modules/.bin/webpack",
+      "watch": "node_modules/.bin/webpack --watch",
+      "package": "node_modules/.bin/webpack --mode production --devtool hidden-source-map",
+      "compile-tests": "tsc -p . --outDir out",
+      "watch-tests": "tsc -p . -w --outDir out",
+      "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
+      "lint": "eslint src --ext ts",
+      "format": "prettier --ignore-path .gitignore --write '.' '!**/vendor/**/*' '!dist/**/*' '!.code-couplet/**/*'",
+      "test": "node ./out/test/runTest.js"
+    },
+    "devDependencies": {
+      "@types/glob": "^7.2.0",
+      "@types/mocha": "^9.1.1",
+      "@types/node": "16.x",
+      "@types/vscode": "^1.70.0",
+      "@typescript-eslint/eslint-plugin": "^5.31.0",
+      "@typescript-eslint/parser": "^5.31.0",
+      "eslint": "^8.20.0",
+      "glob": "^8.0.3",
+      "mocha": "^10.0.0",
+      "ts-loader": "^9.3.1",
+      "tsconfig-paths-webpack-plugin": "^4.0.0",
+      "typescript": "^4.7.4",
+      "prettier": "^3.1.1",
+      "vscode-languageserver-textdocument": "^1.0.7",
+      "webpack": "^5.11.0",
+      "webpack-cli": "^4.10.0"
+    },
+    "dependencies": {
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
