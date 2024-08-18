@@ -2,7 +2,7 @@
   "name": "remote-clippy-buddy-vscode",
   "displayName": "Remote Clippy Buddy: pbcopy and pbpaste for VS Code",
   "description": "Access your local keyboard from a remote terminal!",
-  "version": "0.2.1",
+  "version": "0.1.1",
   "author": "Peter Elmers <peter.elmers@yahoo.com>",
   "publisher": "pelmers",
   "engines": {
@@ -29,8 +29,9 @@
     "terminal"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
+  "license": "MIT",
   "api": "none",
   "main": "./dist/extension.js",
   "extensionKind": [

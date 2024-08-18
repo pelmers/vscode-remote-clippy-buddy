@@ -4,7 +4,7 @@ import { getPort } from "../common";
 
 async function main() {
   const port = getPort();
-  const socket = net.createConnection(port)
+  const socket = net.createConnection(port);
   socket.write("pbpaste");
 
   socket.on("data", (data) => {

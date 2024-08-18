@@ -5,11 +5,8 @@ import { install } from "./remote/install";
 import { log, logError } from "./util";
 
 export async function activate(context: vscode.ExtensionContext) {
-  vscode.window.showInformationMessage("Hello, World! it's clippy buddy");
-  // TODO: watch for terminal opening, inject pbcopy and pbpaste. they are hooked to a socket that links back to the editor's extension host
-  // TODO: extension host gets events on the socket and sends back to the client via regular vscode command
-  if (typeof vscode.env.remoteName === 'undefined') {
-    log('clippy buddy only works with a remote workspace connected')
+  if (typeof vscode.env.remoteName === "undefined") {
+    log("clippy buddy only works when connected to a remote workspace");
   }
 
   // install to a temp directory
@@ -22,7 +19,12 @@ export async function activate(context: vscode.ExtensionContext) {
     // add the install directory to the PATH
     log("Installing on:", vscode.env.remoteName);
     log("Adding to PATH:", installDirectory);
-    context.environmentVariableCollection?.prepend("PATH", installDirectory, {applyAtProcessCreation: true, applyAtShellIntegration: true});
+    // adding the colon at the end is necessary by the way
+    context.environmentVariableCollection?.prepend(
+      "PATH",
+      installDirectory + ":",
+      { applyAtProcessCreation: true, applyAtShellIntegration: true },
+    );
   } catch (e) {
     logError("Failed to install", e);
   }

@@ -8,7 +8,6 @@ export async function createTcpListener(
 ): Promise<vscode.Disposable> {
   log("Creating TCP listener on port", port);
   // Listen for connections on the socket. They will be either "pbcopy" + data (put data on clipboard) or "pbpaste" (we return the data from clipboard)
-  // TODO this listener isn't working. should I just use a tcp port?
   const server = net.createServer();
 
   server.on("connection", (socket) => {
