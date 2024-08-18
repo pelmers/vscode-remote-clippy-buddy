@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pelmers/code-couplet.git"
+    "url": "https://github.com/pelmers/remote-clippy-buddy-vscode.git"
   },
   "icon": "icon.png",
   "categories": [

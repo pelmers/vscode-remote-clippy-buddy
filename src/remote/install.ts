@@ -10,10 +10,10 @@ export const VERSION = "0.0.1";
 // Our scripts pbcopy/pbpaste are defined in javascript.
 // We want to install something executable on the PATH, so this takes a javascript path and
 // generates a wrapper shell script that runs the javascript file using the node install that launched this vscode.
-function wrapJSScript(scriptPath: string, callbackSocketPath: string) {
+function wrapJSScript(scriptPath: string, portEnv: number) {
   const nodePath = process.execPath;
   return `#!/bin/bash
-${REMOTE_CLIPPY_PORT_ENV}="${callbackSocketPath}" "${nodePath}" "${scriptPath}" "$@"
+${REMOTE_CLIPPY_PORT_ENV}="${portEnv}" "${nodePath}" "${scriptPath}" "$@"
 `;
 }
 
@@ -35,15 +35,15 @@ export async function install(
   installDirectory: string,
 ): Promise<vscode.Disposable> {
   await fs.mkdir(installDirectory, { recursive: true });
-  const socketPath = path.join(installDirectory, "rc1");
+  const openPort = await findOpenPort();
   for (const tool of ["pbcopy", "pbpaste"]) {
     const scriptPath = path.join(installDirectory, tool);
     const scriptContents = wrapJSScript(
       path.join(__dirname, `${tool}.js`),
-      socketPath,
+      openPort,
     );
     log(`Writing script to ${scriptPath}`);
     await fs.writeFile(scriptPath, scriptContents, { mode: 0o755 });
   }
-  return await createTcpListener(await findOpenPort());
+  return await createTcpListener(openPort);
 }
