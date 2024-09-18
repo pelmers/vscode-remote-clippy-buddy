@@ -15,4 +15,4 @@ This [VS Code extension](https://marketplace.visualstudio.com/items?itemName=pel
 
 ## Additional Info
 
-- For bugs and feature requests, please visit the repository [on GitHub](https://github.com/pelmers/code-couplet)
+- For bugs and feature requests, please visit the repository [on GitHub](https://github.com/pelmers/vscode-remote-clippy-buddy)
