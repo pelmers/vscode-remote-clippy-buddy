@@ -1,10 +1,12 @@
 import * as net from "net";
 import { once } from "events";
 import { getPort } from "../common";
+import { randomUUID } from "crypto";
 
 async function main() {
   const port = getPort();
   const socket = net.createConnection(port);
+  const uuid = randomUUID();
 
   let data = "";
   process.stdin.on("data", (chunk) => {
@@ -13,7 +15,7 @@ async function main() {
 
   await once(process.stdin, "end");
 
-  socket.write(`pbcopy${data}`, () => {
+  socket.write(`pbcopyuuid=${uuid}data=${data}${uuid}`, () => {
     socket.end();
   });
 }

@@ -11,21 +11,41 @@ export async function createTcpListener(
   const server = net.createServer();
 
   server.on("connection", (socket) => {
+    // If it's an incoming pbcopy then we keep reading data until client tells us it's ended
+    let pbcopyExpectedUuid: string | null = null;
+    let pbcopyCurrentValue = "";
+    const receiveBytesIfPbcopy = (data: string) => {
+      if (pbcopyExpectedUuid != null) {
+        log(`pbcopy ${pbcopyExpectedUuid} received bytes`, data.length);
+        if (data.endsWith(pbcopyExpectedUuid)) {
+          // We reached the end, save to clipboard
+          pbcopyCurrentValue += data.slice(0, data.length - pbcopyExpectedUuid.length)
+          vscode.env.clipboard.writeText(pbcopyCurrentValue);
+          socket.end()
+        } else {
+          // Continue receiving the current value
+          pbcopyCurrentValue += data;
+        }
+      } else {
+        log(`received unknown data ${data}`);
+        socket.end();
+      }
+    };
     socket.on("data", async (data) => {
       const command = data.toString().trim();
-      log("Got command", command);
       if (command.startsWith("pbcopy")) {
-        const clipData = command.slice("pbcopy".length).trim();
-        log("pbcopy", clipData);
-        await vscode.env.clipboard.writeText(clipData);
+        const commandContents = command.slice("pbcopy".length).trim();
+        pbcopyExpectedUuid = commandContents.slice("uuid=".length, commandContents.indexOf("data="))
+        await receiveBytesIfPbcopy(commandContents.slice(commandContents.indexOf("data=") + "data=".length))
       } else if (command === "pbpaste") {
         const data = await vscode.env.clipboard.readText();
-        log("pbpaste", data);
+        log("pbpaste sending bytes", data.length);
         socket.write(data);
+        socket.end()
       } else {
-        socket.write("Unknown command");
+        // Assume we're in the middle of a pbcopy
+        receiveBytesIfPbcopy(command);
       }
-      socket.end();
     });
     socket.on("error", (err) => {
       logError("Socket error", err);

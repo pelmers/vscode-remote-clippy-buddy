@@ -5,8 +5,6 @@ import { createTcpListener } from "./socketListener";
 import { log } from "src/util";
 import { REMOTE_CLIPPY_PORT_ENV } from "./common";
 
-export const VERSION = "0.0.1";
-
 // Our scripts pbcopy/pbpaste are defined in javascript.
 // We want to install something executable on the PATH, so this takes a javascript path and
 // generates a wrapper shell script that runs the javascript file using the node install that launched this vscode.
