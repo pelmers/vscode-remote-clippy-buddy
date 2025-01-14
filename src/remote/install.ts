@@ -1,6 +1,6 @@
 import * as path from "path";
-import * as fs from "fs/promises";
-import * as fsSync from "fs";
+import * as fs from "fs";
+import * as fsp from "fs/promises";
 import * as vscode from "vscode";
 import { createTcpListener } from "./socketListener";
 import { log } from "src/util";
@@ -33,7 +33,7 @@ async function findOpenPort(): Promise<number> {
 export async function install(
   installDirectory: string,
 ): Promise<vscode.Disposable> {
-  await fs.mkdir(installDirectory, { recursive: true });
+  await fsp.mkdir(installDirectory, { recursive: true });
   const openPort = await findOpenPort();
   for (const tool of ["pbcopy", "pbpaste"]) {
     const scriptPath = path.join(installDirectory, tool);
@@ -42,15 +42,13 @@ export async function install(
       openPort,
     );
     log(`Writing script to ${scriptPath}`);
-    await fs.writeFile(scriptPath, scriptContents, { mode: 0o755 });
+    await fsp.writeFile(scriptPath, scriptContents, { mode: 0o755 });
   }
-  return vscode.Disposable.from(await createTcpListener(openPort), {
-    dispose: () => {
-      try {
-        fsSync.rmdirSync(installDirectory);
-      } catch (e) {
-        log(`Error during installed command cleanup`, e);
-      }
-    },
-  });
+  return vscode.Disposable.from(
+    await createTcpListener(openPort),
+    new vscode.Disposable(() => {
+      // VS Code does not await dispose functions so need to use the synchronous version
+      fs.rmSync(installDirectory, { recursive: true, force: true });
+    }),
+  );
 }
