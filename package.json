@@ -2,7 +2,7 @@
   "name": "remote-clippy-buddy-vscode",
   "displayName": "Remote Clippy Buddy: pbcopy and pbpaste for VS Code",
   "description": "Access your local pasteboard from a remote terminal!",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "author": "Peter Elmers <peter.elmers@yahoo.com>",
   "publisher": "pelmers",
   "engines": {
@@ -37,7 +37,19 @@
   "extensionKind": [
     "workspace"
   ],
-  "contributes": {},
+  "contributes": {
+    "configuration": {
+      "title": "Remote Clippy Buddy",
+      "type": "object",
+      "properties": {
+        "remoteClippyBuddy.enablePaste": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable pbpaste command. Note that if this is enabled, it is possible for any program running on the remote host to read your local clipboard."
+        }
+      }
+    }
+  },
   "keybindings": [],
   "scripts": {
     "vscode:prepublish": "yarn run package",

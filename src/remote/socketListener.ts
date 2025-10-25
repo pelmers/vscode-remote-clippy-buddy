@@ -1,11 +1,28 @@
 import * as vscode from "vscode";
-import * as fsSync from "fs";
 import * as net from "net";
 import { log, logError } from "src/util";
+
+const CONFIG_SECTION = "remoteClippyBuddy";
+const PBPASTE_ENABLED_CONFIG_KEY = "enablePaste";
 
 export async function createTcpListener(
   port: number,
 ): Promise<vscode.Disposable> {
+  let pbPasteAllowed = false;
+  const updatePasteAllowedValue = () => {
+    pbPasteAllowed = vscode.workspace
+      .getConfiguration(CONFIG_SECTION)
+      .get(PBPASTE_ENABLED_CONFIG_KEY)!;
+    log(`Updating pbpaste enabled value to: ${pbPasteAllowed}`);
+  };
+
+  const pbpasteEnabledConfigurationListener =
+    vscode.workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration(CONFIG_SECTION)) {
+        updatePasteAllowedValue();
+      }
+    });
+
   log("Creating TCP listener on port", port);
   // Listen for connections on the socket. They will be either "pbcopy" + data (put data on clipboard) or "pbpaste" (we return the data from clipboard)
   const server = net.createServer();
@@ -19,9 +36,12 @@ export async function createTcpListener(
         log(`pbcopy ${pbcopyExpectedUuid} received bytes`, data.length);
         if (data.endsWith(pbcopyExpectedUuid)) {
           // We reached the end, save to clipboard
-          pbcopyCurrentValue += data.slice(0, data.length - pbcopyExpectedUuid.length)
+          pbcopyCurrentValue += data.slice(
+            0,
+            data.length - pbcopyExpectedUuid.length,
+          );
           vscode.env.clipboard.writeText(pbcopyCurrentValue);
-          socket.end()
+          socket.end();
         } else {
           // Continue receiving the current value
           pbcopyCurrentValue += data;
@@ -35,13 +55,22 @@ export async function createTcpListener(
       const command = data.toString().trim();
       if (command.startsWith("pbcopy")) {
         const commandContents = command.slice("pbcopy".length).trim();
-        pbcopyExpectedUuid = commandContents.slice("uuid=".length, commandContents.indexOf("data="))
-        await receiveBytesIfPbcopy(commandContents.slice(commandContents.indexOf("data=") + "data=".length))
+        pbcopyExpectedUuid = commandContents.slice(
+          "uuid=".length,
+          commandContents.indexOf("data="),
+        );
+        await receiveBytesIfPbcopy(
+          commandContents.slice(
+            commandContents.indexOf("data=") + "data=".length,
+          ),
+        );
       } else if (command === "pbpaste") {
-        const data = await vscode.env.clipboard.readText();
+        const data = pbPasteAllowed
+          ? await vscode.env.clipboard.readText()
+          : "pbpaste command disabled\n";
         log("pbpaste sending bytes", data.length);
         socket.write(data);
-        socket.end()
+        socket.end();
       } else {
         // Assume we're in the middle of a pbcopy
         receiveBytesIfPbcopy(command);
@@ -54,6 +83,7 @@ export async function createTcpListener(
 
   const disposable = new vscode.Disposable(() => {
     server.close();
+    pbpasteEnabledConfigurationListener.dispose();
   });
 
   return new Promise((resolve, reject) => {
@@ -63,6 +93,7 @@ export async function createTcpListener(
     });
     server.listen({ port, host: "localhost" }, () => {
       log("Listening on port", port);
+      updatePasteAllowedValue();
       resolve(disposable);
     });
   });
