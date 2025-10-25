@@ -1,5 +1,6 @@
 import * as path from "path";
 import * as fs from "fs/promises";
+import * as fsSync from "fs";
 import * as vscode from "vscode";
 import { createTcpListener } from "./socketListener";
 import { log } from "src/util";
@@ -43,5 +44,13 @@ export async function install(
     log(`Writing script to ${scriptPath}`);
     await fs.writeFile(scriptPath, scriptContents, { mode: 0o755 });
   }
-  return await createTcpListener(openPort);
+  return vscode.Disposable.from(await createTcpListener(openPort), {
+    dispose: () => {
+      try {
+        fsSync.rmdirSync(installDirectory);
+      } catch (e) {
+        log(`Error during installed command cleanup`, e);
+      }
+    },
+  });
 }
