@@ -1,10 +1,8 @@
-import * as net from "net";
 import { once } from "events";
-import { getPort } from "../common";
+import { createCommandHostConnection } from "../common";
 
 async function main() {
-  const port = getPort();
-  const socket = net.createConnection(port);
+  const socket = createCommandHostConnection();
   socket.write("pbpaste");
 
   socket.on("data", (data) => {
