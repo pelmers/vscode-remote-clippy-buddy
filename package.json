@@ -42,9 +42,9 @@
       "title": "Remote Clippy Buddy",
       "type": "object",
       "properties": {
-        "remoteClippyBuddy.enablePaste": {
+        "remoteClippyBuddy.enablePbpaste": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "description": "Enable pbpaste command. Note that if this is enabled, it is possible for any program running on the remote host to read your local clipboard."
         }
       }

@@ -3,7 +3,7 @@ import * as net from "net";
 import { log, logError } from "src/util";
 
 const CONFIG_SECTION = "remoteClippyBuddy";
-const PBPASTE_ENABLED_CONFIG_KEY = "enablePaste";
+const PBPASTE_ENABLED_CONFIG_KEY = "enablePbpaste";
 
 export async function createTcpListener(
   port: number,
@@ -67,8 +67,8 @@ export async function createTcpListener(
       } else if (command === "pbpaste") {
         const data = pbPasteAllowed
           ? await vscode.env.clipboard.readText()
-          : "pbpaste command disabled\n";
-        log("pbpaste sending bytes", data.length);
+          : "pbpaste command disabled for security. You can enable it in VS Code settings.\n";
+        log("pbpaste sending bytes length:", data.length);
         socket.write(data);
         socket.end();
       } else {
